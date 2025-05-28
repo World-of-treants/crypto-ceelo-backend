@@ -23,10 +23,28 @@ function generateRolls(clientSeed, nonce) {
   return rolls;
 }
 
+function rollOneDie() {
+  return Math.floor(Math.random() * 6) + 1;
+}
+
 app.post("/roll", (req, res) => {
   const { clientSeed, nonce } = req.body;
   const rolls = generateRolls(clientSeed, nonce);
   res.json({ rolls });
 });
 
+app.get("/roll-first", (req, res) => {
+  let playerA = rollOneDie();
+  let playerB = rollOneDie();
+
+  while (playerA === playerB) {
+    playerA = rollOneDie();
+    playerB = rollOneDie();
+  }
+
+  const winner = playerA > playerB ? "playerA" : "playerB";
+  res.json({ playerA, playerB, winner });
+});
+
 app.listen(3001, () => console.log("Backend running on http://localhost:3001"));
+Added /roll-first endpoint
